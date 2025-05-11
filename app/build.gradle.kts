@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -40,6 +41,23 @@ android {
 }
 
 dependencies {
+    // Firebase BoM (Bill of Materials)
+    implementation(platform(libs.firebase.bom))
+
+    // Firebase Authentication
+    implementation(libs.firebase.auth.ktx)
+
+    // Firebase Analytics (optional)
+    implementation(libs.firebase.analytics)
+
+    // Google Sign-In
+    implementation(libs.play.services.auth)
+
+    implementation(libs.google.firebase.auth)
+    implementation(platform(libs.firebase.bom))
+
+    implementation(libs.androidx.activity.compose.v190)
+    implementation(libs.material3)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -49,6 +67,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.runtime.android)
+    implementation(libs.androidx.navigation.compose.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
