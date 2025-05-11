@@ -6,6 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import viewmodel.AuthViewModel
 
@@ -26,6 +27,7 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
         Spacer(modifier = Modifier.height(8.dp))
         TextField(value = password, onValueChange = { password = it }, label = { Text("Password") })
         Spacer(modifier = Modifier.height(16.dp))
+
         Button(
             onClick = {
                 viewModel.signIn(email, password,
@@ -35,8 +37,16 @@ fun SignInScreen(navController: NavController, viewModel: AuthViewModel) {
         ) {
             Text("Sign In")
         }
+
         if (errorMessage != null) {
             Text(errorMessage!!, color = MaterialTheme.colorScheme.error)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Teks yang mengarahkan ke Sign Up
+        TextButton(onClick = { navController.navigate("signup") }) {
+            Text("Doesn't have an account? Sign Up", fontSize = 14.sp)
         }
     }
 }
