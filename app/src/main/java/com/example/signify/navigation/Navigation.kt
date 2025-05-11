@@ -49,6 +49,8 @@ fun AppNavHost(
         composable("welcome") { WelcomeScreen(navController, launcher) }
         composable("signin") { SignInScreen(navController, authViewModel) }
         composable("signup") { SignUpScreen(navController, authViewModel) }
+        composable("forgotpassword") { ForgotPasswordScreen(navController, authViewModel) }
         composable("home") { HomeScreen(navController, authViewModel) }
     }
 }
+

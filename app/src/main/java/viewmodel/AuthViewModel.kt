@@ -35,6 +35,17 @@ class AuthViewModel @Inject constructor(
             }
     }
 
+    // Kirim link ke email
+    fun sendResetPasswordEmail(email: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        auth.sendPasswordResetEmail(email)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+            .addOnFailureListener { exception ->
+                onError(exception.message ?: "Unknown error")
+            }
+    }
+
     fun signIn(email: String, password: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         isLoading.value = true
         auth.signInWithEmailAndPassword(email, password)
