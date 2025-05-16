@@ -1,6 +1,5 @@
 package viewmodel
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -11,19 +10,25 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class AuthViewModel @Inject constructor(
+
+class AuthViewModel(
     private val auth: FirebaseAuth = Firebase.auth
 ) : ViewModel() {
 
-    val currentUser = mutableStateOf<FirebaseUser?>(auth.currentUser)
-    val isLoading = mutableStateOf(false)
+    private val _currentUser = MutableStateFlow<FirebaseUser?>(auth.currentUser)
+    val currentUser: StateFlow<FirebaseUser?> = _currentUser
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     init {
         // Observe auth state changes to update currentUser in real-time
         auth.addAuthStateListener { auth ->
-            currentUser.value = auth.currentUser
+            _currentUser.value = auth.currentUser
+            _isLoading.value = false
         }
     }
 
@@ -47,46 +52,47 @@ class AuthViewModel @Inject constructor(
     }
 
     fun signIn(email: String, password: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
-        isLoading.value = true
+        _isLoading.value = true
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-                currentUser.value = auth.currentUser
+                _currentUser.value = auth.currentUser
                 onSuccess()
-                isLoading.value = false
+                _isLoading.value = false
             }
             .addOnFailureListener { exception ->
-                val errorMessage = when (exception) {
-                    is FirebaseAuthInvalidUserException -> "Invalid user credentials."
-                    is FirebaseAuthInvalidCredentialsException -> "Invalid password."
-                    else -> exception.message ?: "Unknown error"
-                }
+                val errorMessage = mapFirebaseAuthException(exception)
                 onError(errorMessage)
-                isLoading.value = false
+                _isLoading.value = false
             }
     }
 
     fun signUp(email: String, password: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
-        isLoading.value = true
+        _isLoading.value = true
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-                currentUser.value = auth.currentUser
+                _currentUser.value = auth.currentUser
                 onSuccess()
-                isLoading.value = false
+                _isLoading.value = false
             }
             .addOnFailureListener { exception ->
-                val errorMessage = when (exception) {
-                    is FirebaseAuthWeakPasswordException -> "Password is too weak."
-                    is FirebaseAuthInvalidCredentialsException -> "Invalid email address."
-                    is FirebaseAuthUserCollisionException -> "An account with this email already exists."
-                    else -> exception.message ?: "Unknown error"
-                }
+                val errorMessage = mapFirebaseAuthException(exception)
                 onError(errorMessage)
-                isLoading.value = false
+                _isLoading.value = false
             }
     }
 
     fun signOut() {
         auth.signOut()
-        currentUser.value = null
+        _currentUser.value = null
+    }
+
+    private fun mapFirebaseAuthException(exception: Exception): String {
+        return when (exception) {
+            is FirebaseAuthWeakPasswordException -> "Kata sandi terlalu lemah."
+            is FirebaseAuthInvalidCredentialsException -> "Email atau kata sandi tidak valid."
+            is FirebaseAuthUserCollisionException -> "Email sudah digunakan."
+            is FirebaseAuthInvalidUserException -> "Pengguna tidak ditemukan."
+            else -> "Terjadi kesalahan: ${exception.localizedMessage}"
+        }
     }
 }

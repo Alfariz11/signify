@@ -51,6 +51,10 @@ fun AppNavHost(
         composable("signup") { SignUpScreen(navController, authViewModel) }
         composable("forgotpassword") { ForgotPasswordScreen(navController, authViewModel) }
         composable("home") { HomeScreen(navController, authViewModel) }
+        composable("leaderboard") { LeaderboardScreen(navController, authViewModel) }
+        composable("kamus") { KamusScreen(navController, authViewModel) }
+        composable("rapidgame") { RapidGameScreen(navController, authViewModel) }
+        composable("profile") { ProfileScreen(navController, authViewModel) }
     }
 }
 

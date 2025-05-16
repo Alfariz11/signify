@@ -46,7 +46,7 @@ dependencies {
 
     // Firebase Authentication
     implementation(libs.firebase.auth.ktx)
-
+    implementation (libs.androidx.preference.ktx)
     // Firebase Analytics (optional)
     implementation(libs.firebase.analytics)
 
@@ -69,6 +69,7 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.android)
     implementation(libs.androidx.navigation.compose.android)
+    implementation(libs.androidx.foundation.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
